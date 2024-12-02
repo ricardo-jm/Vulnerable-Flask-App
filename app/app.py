@@ -258,11 +258,11 @@ def search_customer():
                 try:
                     search_term = content['search']
                     print(search_term)
-                    str_query = "SELECT first_name, last_name, username FROM customer WHERE username = '%s';" % search_term
+                    str_query = "SELECT first_name, last_name, username FROM customer WHERE username = :search_term"
                     # mycust = Customer.query.filter_by(username = search_term).first()
                     # return jsonify({'Customer': mycust.username, 'First Name': mycust.first_name}),200
 
-                    search_query = db.engine.execute(str_query)
+                    search_query = db.engine.execute(str_query, search_term=search_term)
                     for result in search_query:
                         results.append(list(result))
                     print(results)
