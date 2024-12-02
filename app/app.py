@@ -98,8 +98,13 @@ def insecure_verify(token):
     print(decoded)
     return True
 
+from flask import escape
+
 @app.errorhandler(404)
 def pnf(e):
+
+    safe_url = escape(request.url)
+    
     template = '''<html>
     <head>
     <title>Error</title>
@@ -109,9 +114,9 @@ def pnf(e):
     <h3>%s</h3>
     </body>
     </html>
-    ''' % request.url
+    ''' % safe_url
 
-    return render_template_string(template, dir = dir, help = help, locals = locals),404
+    return render_template_string(template),404
 
 def has_no_empty_params(rule):
     default = rule.defaults if rule.defaults is not None else ()
