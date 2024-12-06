@@ -98,10 +98,13 @@ def insecure_verify(token):
     print(decoded)
     return True
 
-
+from flask import escape
 
 @app.errorhandler(404)
 def pnf(e):
+
+    safe_url = escape(request.url)
+    
     template = '''<html>
     <head>
     <title>Error</title>
@@ -111,9 +114,9 @@ def pnf(e):
     <h3>%s</h3>
     </body>
     </html>
-    ''' % request.url
+    ''' % safe_url
 
-    return render_template_string(template, dir = dir, help = help, locals = locals),404
+    return render_template_string(template),404
 
 def has_no_empty_params(rule):
     default = rule.defaults if rule.defaults is not None else ()
@@ -260,11 +263,13 @@ def search_customer():
                 try:
                     search_term = content['search']
                     print(search_term)
-                    str_query = "SELECT first_name, last_name, username FROM customer WHERE username = '%s';" % search_term
+                    #str_query = "SELECT first_name, last_name, username FROM customer WHERE username = '%s';" % search_term
+                    str_query = "SELECT first_name, last_name, username FROM customer WHERE username = :search_term"
                     # mycust = Customer.query.filter_by(username = search_term).first()
                     # return jsonify({'Customer': mycust.username, 'First Name': mycust.first_name}),200
 
-                    search_query = db.engine.execute(str_query)
+                    #search_query = db.engine.execute(str_query)
+                    search_query = db.engine.execute(str_query, search_term=search_term)
                     for result in search_query:
                         results.append(list(result))
                     print(results)
